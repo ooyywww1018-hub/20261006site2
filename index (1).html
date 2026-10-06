@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>집현전의 암호 - 한글날 방탈출</title>
+<meta name="description" content="훈민정음 해례본이 사라졌다! 집현전 학자가 되어 다섯 개의 방을 열고 한글의 비밀을 풀어 보는 한글날 방탈출 게임">
+<meta name="theme-color" content="#0f1626">
+<meta property="og:type" content="website">
+<meta property="og:title" content="집현전의 암호 - 한글날 방탈출">
+<meta property="og:description" content="집현전 학자가 되어 사라진 훈민정음 해례본을 되찾아 보세요.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9C%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #e4e8ee;
+  --bg-deep: #d3dae4;
+  --paper: #f6f5ef;
+  --paper-edge: #c9cdc2;
+  --ink: #1b2233;
+  --ink-soft: #4a5468;
+  --blue: #27648a;
+  --red: #b83a2e;
+  --gold: #a87a1c;
+  --ok: #2f7a4f;
+  --focus: #27648a;
+  --serif: 'Nanum Myeongjo', 'Noto Serif KR', 'Apple SD Gothic Neo', serif;
+  --sans: 'Gowun Dodum', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1626;
+    --bg-deep: #0a101c;
+    --paper: #1b2438;
+    --paper-edge: #34415c;
+    --ink: #e9ecf2;
+    --ink-soft: #a9b3c7;
+    --blue: #6db3dc;
+    --red: #e0685a;
+    --gold: #e3b24e;
+    --ok: #62c28a;
+    --focus: #6db3dc;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1626;
+  --bg-deep: #0a101c;
+  --paper: #1b2438;
+  --paper-edge: #34415c;
+  --ink: #e9ecf2;
+  --ink-soft: #a9b3c7;
+  --blue: #6db3dc;
+  --red: #e0685a;
+  --gold: #e3b24e;
+  --ok: #62c28a;
+  --focus: #6db3dc;
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  min-height: 100%;
+  margin: 0;
+  background: var(--bg);
+  background-image: linear-gradient(180deg, var(--bg-deep) 0, var(--bg) 220px);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-text-size-adjust: 100%;
+}
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 18px 18px 56px; }
+
+/* header */
+.top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.brand { font-family: var(--serif); font-weight: 800; font-size: 20px; letter-spacing: -0.01em; }
+.timer { font-variant-numeric: tabular-nums; color: var(--ink-soft); font-size: 15px; white-space: nowrap; }
+.bar { display: flex; gap: 6px; margin-bottom: 16px; }
+.bar i { flex: 1; height: 5px; background: var(--paper-edge); border-radius: 1px; }
+.bar i.done { background: var(--blue); }
+.bar i.now { background: var(--gold); }
+.slots { display: flex; gap: 10px; align-items: center; margin-bottom: 22px; }
+.slots .label { font-size: 14px; color: var(--ink-soft); margin-right: 4px; }
+.slot {
+  width: 52px; height: 52px; display: grid; place-items: center;
+  font-family: var(--serif); font-weight: 800; font-size: 28px;
+  border: 2px dashed var(--paper-edge); color: var(--paper-edge); border-radius: 3px;
+}
+.slot.got { border: 2px solid var(--red); background: var(--paper); color: var(--red); animation: pop .5s ease-out; }
+@keyframes pop { 0% { transform: scale(.6) rotate(-6deg); } 70% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+/* paper card */
+.paper {
+  background: var(--paper);
+  border: 1px solid var(--paper-edge);
+  border-radius: 4px;
+  padding: 22px 22px 24px;
+}
+h1, h2 { font-family: var(--serif); letter-spacing: -0.02em; margin: 0; line-height: 1.3; }
+h1 { font-size: 40px; font-weight: 800; }
+h2 { font-size: 26px; font-weight: 800; }
+.date { color: var(--red); font-family: var(--serif); font-weight: 700; margin: 0 0 10px; }
+.story p { margin: 0 0 12px; max-width: 34em; }
+.story p.em { font-family: var(--serif); font-weight: 700; font-size: 19px; }
+.narr { color: var(--ink-soft); margin: 8px 0 18px; }
+
+.btn {
+  display: inline-block; cursor: pointer; border: 0; border-radius: 3px;
+  background: var(--ink); color: var(--paper);
+  padding: 11px 20px; font-weight: 700; min-height: 44px;
+}
+.btn:hover { filter: brightness(1.15); }
+.btn.red { background: var(--red); color: #fff; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--paper-edge); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 14px; }
+
+/* puzzles */
+.puzzle { border-top: 1px solid var(--paper-edge); padding: 18px 0 6px; margin-top: 6px; }
+.puzzle.shake { animation: shake .35s; }
+@keyframes shake { 20% { transform: translateX(-7px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+.pnum { font-size: 14px; color: var(--ink-soft); margin-bottom: 4px; }
+.puzzle.solved .pnum { color: var(--ok); font-weight: 700; }
+.q { margin: 0 0 12px; }
+.q b { font-family: var(--serif); font-size: 26px; letter-spacing: .12em; color: var(--red); }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+input[type=text] {
+  flex: 1 1 180px; min-width: 0; min-height: 44px; padding: 8px 12px;
+  border: 1.5px solid var(--paper-edge); border-radius: 3px; background: transparent; font-size: 18px;
+}
+select {
+  min-height: 44px; padding: 6px 8px; border: 1.5px solid var(--paper-edge); border-radius: 3px;
+  background: var(--paper); max-width: 100%;
+}
+.mrow { display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px; padding: 8px 10px; border-left: 3px solid var(--paper-edge); }
+.mrow.bad { border-left-color: var(--red); }
+.mrow.good { border-left-color: var(--ok); }
+.mlabel { font-weight: 700; }
+.mlabel .big { font-family: var(--serif); font-size: 26px; margin-right: 8px; }
+@media (min-width: 560px) { .mrow { grid-template-columns: 230px 1fr; align-items: center; } }
+.opts { display: flex; gap: 8px; flex-wrap: wrap; }
+.opt { cursor: pointer; min-height: 44px; padding: 8px 16px; border: 1.5px solid var(--paper-edge); background: transparent; border-radius: 3px; font-size: 18px; }
+.opt:hover { border-color: var(--blue); }
+.cards { display: grid; gap: 8px; margin-bottom: 8px; }
+.ocard {
+  position: relative; text-align: left; cursor: pointer; padding: 12px 14px 12px 14px;
+  border: 1.5px solid var(--paper-edge); background: transparent; border-radius: 3px; min-height: 44px;
+}
+.ocard.on { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, transparent); padding-right: 52px; }
+.badge {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  width: 30px; height: 30px; border-radius: 50%; background: var(--blue); color: var(--paper);
+  display: grid; place-items: center; font-weight: 800;
+}
+.chips { display: flex; gap: 8px; margin: 4px 0 12px; }
+.chip { width: 54px; height: 54px; display: grid; place-items: center; background: var(--paper); border: 2px solid var(--red); color: var(--red); font-family: var(--serif); font-weight: 800; font-size: 30px; border-radius: 3px; }
+.hintbtn { cursor: pointer; background: none; border: 0; padding: 8px 0; color: var(--blue); font-weight: 700; text-decoration: underline; min-height: 40px; }
+.hint { margin: 6px 0 0; padding: 8px 12px; border-left: 3px solid var(--gold); background: color-mix(in srgb, var(--gold) 12%, transparent); }
+.msg { min-height: 1.4em; margin: 8px 0 0; color: var(--red); font-weight: 700; }
+.ans { color: var(--ok); font-weight: 700; }
+
+/* clear panel */
+.clear { margin-top: 22px; padding: 18px; border: 2px solid var(--red); border-radius: 4px; }
+.clear h3 { margin: 0 0 6px; font-family: var(--serif); font-size: 22px; }
+.clear p { margin: 0 0 8px; }
+.fact { color: var(--ink-soft); }
+
+/* end */
+.rank { font-family: var(--serif); font-weight: 800; font-size: 30px; color: var(--red); margin: 6px 0 14px; }
+.stats { display: flex; gap: 24px; flex-wrap: wrap; margin: 12px 0 18px; }
+.stats div span { display: block; font-size: 14px; color: var(--ink-soft); }
+.stats div strong { font-family: var(--serif); font-size: 24px; }
+.hidden { display: none; }
+@media (max-width: 480px) { h1 { font-size: 32px; } .slot { width: 46px; height: 46px; font-size: 24px; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ---------- 콘텐츠 ---------- */
+const ROOMS = [
+  {
+    name: '제1관 · 집현전 대문',
+    narr: '굳게 닫힌 대문에 초성만 남은 암호가 새겨져 있어요. 초성을 보고 낱말을 알아맞혀 보세요.',
+    piece: '정',
+    puzzles: [
+      { type: 'text', q: '훈민정음을 만든 임금님은? <b>ㅅㅈㄷㅇ</b>', answers: ['세종대왕', '세종'], reveal: '세종대왕',
+        hint: '조선의 네 번째 임금님이에요. 첫 글자는 “세”예요.' },
+      { type: 'text', q: '세종대왕이 학자들을 모아 훈민정음을 연구하게 한 곳은? <b>ㅈㅎㅈ</b>', answers: ['집현전'], reveal: '집현전',
+        hint: '바로 지금 여러분이 있는 이곳이에요!' },
+      { type: 'text', q: '해마다 10월 9일, 한글을 만든 뜻을 기리는 날은? <b>ㅎㄱㄴ</b>', answers: ['한글날'], reveal: '한글날',
+        hint: '“한글”에 “날”을 붙여 보세요.' }
+    ],
+    fact: '집현전은 세종대왕 때 학문을 연구하던 기관이에요. 정인지, 성삼문, 신숙주 같은 학자들이 훈민정음을 설명하는 책을 만드는 일에 함께했어요.'
+  },
+  {
+    name: '제2관 · 자음의 방',
+    narr: '벽에 다섯 개의 그림자가 걸려 있어요. 기본 자음은 소리를 낼 때의 발음 기관 모양을 본떠 만들었답니다.',
+    piece: '음',
+    puzzles: [
+      { type: 'match', q: '자음 기본 글자와 본뜬 모양을 알맞게 짝지어 보세요.',
+        options: ['혀뿌리가 목구멍을 막는 모양', '혀가 윗잇몸에 닿는 모양', '입의 모양', '이의 모양', '목구멍의 모양'],
+        items: [
+          { label: 'ㄱ', answer: '혀뿌리가 목구멍을 막는 모양' },
+          { label: 'ㄴ', answer: '혀가 윗잇몸에 닿는 모양' },
+          { label: 'ㅁ', answer: '입의 모양' },
+          { label: 'ㅅ', answer: '이의 모양' },
+          { label: 'ㅇ', answer: '목구멍의 모양' }
+        ],
+        reveal: 'ㄱ·ㄴ·ㅁ·ㅅ·ㅇ 모두 짝짓기 성공',
+        hint: 'ㅁ은 네모난 입을, ㅇ은 둥근 목구멍을 떠올려 보세요.' },
+      { type: 'text', q: '단서: 훈민정음을 만들 때 글자는 <strong>28자</strong>였고, 오늘날 쓰는 기본 글자는 자음 14자 + 모음 10자 = <strong>24자</strong>예요. 지금은 쓰지 않는 글자는 몇 개일까요? (숫자로 쓰기)',
+        answers: ['4', '4개', '네개', '사'], reveal: '4개',
+        hint: '28에서 24를 빼 보세요.' }
+    ],
+    fact: '기본 글자 다섯 개에 획을 더해 나머지 자음을 만들었어요. 예를 들어 ㄱ에 획을 더하면 ㅋ이 돼요. 이런 원리를 가획이라고 해요.'
+  },
+  {
+    name: '제3관 · 모음의 방',
+    narr: '천장에는 하늘, 바닥에는 땅, 그 사이에는 서 있는 사람이 그려져 있어요. 세 가지를 합치면 모음이 태어나요.',
+    piece: '훈',
+    puzzles: [
+      { type: 'match', q: '하늘의 점(ㆍ)을 땅(ㅡ)과 사람(ㅣ)에 붙이면 어떤 모음이 될까요?',
+        options: ['ㅏ', 'ㅓ', 'ㅗ', 'ㅜ'],
+        items: [
+          { label: 'ㅣ의 오른쪽에 점(ㆍ)', answer: 'ㅏ' },
+          { label: 'ㅣ의 왼쪽에 점(ㆍ)', answer: 'ㅓ' },
+          { label: 'ㅡ의 위에 점(ㆍ)', answer: 'ㅗ' },
+          { label: 'ㅡ의 아래에 점(ㆍ)', answer: 'ㅜ' }
+        ],
+        reveal: 'ㅏ·ㅓ·ㅗ·ㅜ 완성',
+        hint: 'ㅗ는 “위”를 보고, ㅜ는 “아래”를 보는 글자예요.' },
+      { type: 'text', q: '모음의 바탕이 된 세 가지는 하늘, 땅, 그리고 무엇일까요?',
+        answers: ['사람', '사람의모양'], reveal: '사람',
+        hint: '세로선 ㅣ는 서 있는 ○○의 모습이에요.' }
+    ],
+    fact: '모음은 하늘(ㆍ), 땅(ㅡ), 사람(ㅣ)을 본떠 만들었어요. 단 세 글자를 조합해서 많은 모음을 만들 수 있는 아주 똑똑한 원리예요.'
+  },
+  {
+    name: '제4관 · 서고',
+    narr: '책장 곳곳에 한글의 역사를 적은 카드가 흩어져 있어요. 시간의 순서를 바로잡아야 서고가 열려요.',
+    piece: '민',
+    puzzles: [
+      { type: 'order', q: '한글의 역사를 오래된 일부터 차례대로 카드를 눌러 보세요. (눌린 순서대로 번호가 붙어요)',
+        cards: [
+          '세종대왕이 새 글자 훈민정음을 만들었어요.',
+          '훈민정음을 책으로 펴내 백성에게 널리 알렸어요.',
+          '한글이 오랫동안 쓰인 뒤, 한글을 기념하는 날(가갸날)이 처음 만들어졌어요.',
+          '훈민정음 해례본이 세계가 인정한 유네스코 기록유산이 되었어요.'
+        ],
+        shuffled: [2, 0, 3, 1],
+        reveal: '만들기 → 알리기 → 기념일 만들기 → 세계기록유산 등재',
+        hint: '글자를 만들어야 알릴 수 있겠죠? 기념일과 세계기록유산 중에는 우리가 사는 시대와 더 가까운 일이 나중이에요.' },
+      { type: 'text', q: '책장 라벨에 이렇게 적혀 있어요. “국보 제 (  ) 호 · 훈민정음 해례본”. 괄호 안의 숫자는?',
+        answers: ['70', '70호', '칠십'], reveal: '70호',
+        hint: '십의 자리 숫자가 7이에요. (일흔)' }
+    ],
+    fact: '훈민정음 해례본은 새 글자의 만든 원리와 쓰임을 설명한 책이에요. 우리나라 국보이고, 유네스코 세계기록유산이기도 해요.'
+  },
+  {
+    name: '제5관 · 해례본 보관함',
+    narr: '마지막 방이에요! 보관함의 자물쇠는 우리말을 바르게 쓰는 사람만 열 수 있어요. 맞춤법·우리말 10문제를 풀고, 모은 글자 조각으로 책 이름을 완성하세요.',
+    piece: null,
+    puzzles: [
+      { type: 'choice', q: '지수는 숙제를 (   ) 했어요.', options: ['안', '않'], answer: '안', reveal: '안',
+        hint: '“아니 했어요”로 바꿔 말해도 자연스러우면 “안”이에요.' },
+      { type: 'choice', q: '이 문제는 (   ) 푸는 거야?', options: ['어떻게', '어떡해'], answer: '어떻게', reveal: '어떻게',
+        hint: '푸는 방법을 묻는 말이에요. “어떡해”는 “어떻게 해”를 줄인 말이라 뒤에 “해”가 이미 들어 있어요.' },
+      { type: 'choice', q: '햇빛이나 달빛에 반짝이는 잔잔한 물결을 가리키는 순우리말은?', options: ['가온', '윤슬', '미르', '아라'], answer: '윤슬', reveal: '윤슬',
+        hint: '초성이 ㅇㅅ이에요.' },
+      { type: 'choice', q: '선생님께서 “그렇게 하면 안 (   )!” 하고 말씀하셨어요.', options: ['되', '돼'], answer: '돼', reveal: '돼',
+        hint: '“되”와 “돼” 자리에 “하”와 “해”를 넣어 보세요. “안 해!”가 자연스러우니 “돼”예요.' },
+      { type: 'choice', q: '감기가 다 (   ) 학교에 갔어요.', options: ['낳아서', '나아서', '낫아서'], answer: '나아서', reveal: '나아서',
+        hint: '“낳다”는 아기나 알을 낳을 때 써요. 아픈 곳이 좋아질 때는 “낫다”를 쓰고, “나아서”로 바뀌어요.' },
+      { type: 'choice', q: '이번 연휴는 (   ) 동안 쉬어요?', options: ['몇일', '며칠'], answer: '며칠', reveal: '며칠',
+        hint: '날의 수를 물을 때는 “며칠”이라고 써요. “몇일”이라는 낱말은 없어요.' },
+      { type: 'choice', q: '(   ) 오늘은 좋은 일이 생길 것 같아요.', options: ['웬지', '왠지'], answer: '왠지', reveal: '왠지',
+        hint: '“왜 그런지 모르게”를 줄인 말이라 “왜”가 들어간 “왠지”예요.' },
+      { type: 'choice', q: '아이스크림이 (   ) 녹아 버렸어요.', options: ['금새', '금세'], answer: '금세', reveal: '금세',
+        hint: '“금시에”가 줄어든 말이에요. 끝을 “세”로 써요.' },
+      { type: 'choice', q: '띄어쓰기가 올바른 문장을 고르세요.', options: ['나는 노래를 부를수 있어요.', '나는 노래를 부를 수 있어요.'], answer: '나는 노래를 부를 수 있어요.', reveal: '부를 수 있어요',
+        hint: '“수”는 홀로 쓰이는 낱말이라 앞말과 띄어 써요.' },
+      { type: 'choice', q: '“강”을 뜻하는 순우리말은?', options: ['아라', '미르', '가람', '나래'], answer: '가람', reveal: '가람',
+        hint: '초성이 ㄱㄹ이에요.' },
+      { type: 'text', pieces: true,
+        q: '마지막 자물쇠예요. 모은 글자 조각 네 개를 알맞은 순서로 배열해 책 이름을 입력하세요.<br>뜻: “백성을 가르치는 바른 소리”',
+        answers: ['훈민정음'], reveal: '훈민정음',
+        hint: '세종대왕이 만든 글자의 처음 이름이기도 해요. 4글자예요.' }
+    ],
+    fact: ''
+  }
+];
+
+/* ---------- 상태 ---------- */
+const app = document.getElementById('app');
+const S = { screen: 'intro', room: 0, hints: 0, hinted: {}, solved: [], pieces: [], start: 0, elapsed: 0, tick: null };
+
+function h(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') e.className = v;
+    else if (k === 'html') e.innerHTML = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v);
+  }
+  kids.flat().forEach(c => { if (c == null || c === false) return; e.append(c.nodeType ? c : document.createTextNode(c)); });
+  return e;
+}
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+const norm = s => s.replace(/\s+/g, '').replace(/[.!?。]/g, '').toLowerCase();
+const fmt = sec => String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+
+function resetGame() {
+  S.room = 0; S.hints = 0; S.hinted = {}; S.pieces = [];
+  S.solved = ROOMS.map(r => r.puzzles.map(() => false));
+  S.elapsed = 0;
+}
+
+/* ---------- 화면 ---------- */
+function renderTop() {
+  const timer = h('div', { class: 'timer', id: 'timer' }, '시간 ' + fmt(S.elapsed));
+  const bar = h('div', { class: 'bar', 'aria-hidden': 'true' },
+    ROOMS.map((_, i) => h('i', { class: i < S.room ? 'done' : (i === S.room ? 'now' : '') })));
+  const slots = h('div', { class: 'slots' },
+    h('span', { class: 'label' }, '글자 조각'),
+    [0, 1, 2, 3].map(i => S.pieces[i]
+      ? h('div', { class: 'slot got' }, S.pieces[i])
+      : h('div', { class: 'slot', 'aria-label': '아직 찾지 못한 조각' }, '?')));
+  return [h('div', { class: 'top' }, h('div', { class: 'brand' }, '집현전의 암호'), timer), bar, slots];
+}
+
+function showIntro() {
+  S.screen = 'intro';
+  app.innerHTML = '';
+  app.append(h('div', { class: 'paper story' },
+    h('p', { class: 'date' }, '세종 28년(1446년), 훈민정음을 알리기 하루 전날 밤'),
+    h('h1', {}, '집현전의 암호'),
+    h('div', { style: 'height:14px' }),
+    h('p', {}, '집현전의 불빛이 하나둘 꺼지던 밤, 큰일이 벌어졌어요. 새 글자의 원리를 담은 책 「훈민정음 해례본」이 감쪽같이 사라진 거예요!'),
+    h('p', {}, '누군가 방마다 암호 자물쇠를 걸어 두고 달아났어요. 날이 밝으면 세종대왕이 백성에게 새 글자를 알리실 텐데, 시간이 없어요.'),
+    h('p', { class: 'em' }, '여러분은 집현전 학자가 되어 다섯 개의 방을 열고 해례본을 되찾아 주세요.'),
+    h('div', { class: 'actions' }, h('button', { class: 'btn red', onclick: startGame }, '집현전에 들어가기')),
+    h('p', { class: 'narr', style: 'margin-top:16px;font-size:15px' }, '5개의 방 · 약 20~30분 · 힌트는 쓸 수 있지만 많이 쓸수록 마지막 칭호가 낮아져요.')));
+}
+
+function startGame() {
+  resetGame();
+  S.start = Date.now();
+  clearInterval(S.tick);
+  S.tick = setInterval(() => {
+    S.elapsed = Math.floor((Date.now() - S.start) / 1000);
+    const t = document.getElementById('timer');
+    if (t) t.textContent = '시간 ' + fmt(S.elapsed);
+  }, 1000);
+  showRoom();
+}
+
+function showRoom() {
+  S.screen = 'room';
+  const r = ROOMS[S.room];
+  app.innerHTML = '';
+  app.append(...renderTop());
+  const card = h('div', { class: 'paper' });
+  card.append(h('h2', {}, r.name), h('p', { class: 'narr' }, r.narr));
+  const clearBox = h('div', {});
+  r.puzzles.forEach((p, pi) => card.append(buildPuzzle(p, S.room, pi, clearBox)));
+  card.append(clearBox);
+  app.append(card);
+  window.scrollTo(0, 0);
+}
+
+function buildPuzzle(p, ri, pi, clearBox) {
+  const key = ri + '-' + pi;
+  const box = h('div', { class: 'puzzle' });
+  let msg, hintArea;
+
+  function fail(text) {
+    msg.textContent = text;
+    box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+  }
+  function solve() {
+    S.solved[ri][pi] = true;
+    draw();
+    checkClear(ri, clearBox);
+  }
+  function showHint() {
+    hintArea.innerHTML = '';
+    if (!S.hinted[key]) return;
+    hintArea.append(h('p', { class: 'hint' }, '💡 ' + p.hint));
+  }
+
+  function draw() {
+    box.innerHTML = '';
+    const solved = S.solved[ri][pi];
+    box.classList.toggle('solved', solved);
+    box.append(h('div', { class: 'pnum' }, '문제 ' + (pi + 1) + (solved ? ' · 해결' : '')));
+    box.append(h('p', { class: 'q', html: p.q }));
+    if (solved) { box.append(h('div', { class: 'ans' }, '정답: ' + p.reveal)); return; }
+
+    if (p.pieces) {
+      box.append(h('div', { class: 'chips', 'aria-label': '모은 글자 조각' }, S.pieces.map(c => h('div', { class: 'chip' }, c))));
+    }
+
+    if (p.type === 'text') {
+      const input = h('input', { type: 'text', placeholder: '정답을 입력하세요', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false', 'aria-label': '정답 입력' });
+      const submit = () => {
+        if (p.answers.some(a => norm(a) === norm(input.value))) solve();
+        else fail('자물쇠가 꿈쩍도 안 해요. 문제를 다시 읽고 입력해 보세요.');
+      };
+      input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) submit(); });
+      box.append(h('div', { class: 'row' }, input, h('button', { class: 'btn', onclick: submit }, '확인')));
+    }
+
+    if (p.type === 'match') {
+      const sels = p.items.map(() => h('select', {},
+        h('option', { value: '' }, '선택하세요'),
+        shuffle(p.options).map(o => h('option', { value: o }, o))));
+      const rows = p.items.map((it, i) => h('div', { class: 'mrow' },
+        h('div', { class: 'mlabel' }, it.label.length <= 2 ? h('span', { class: 'big' }, it.label) : it.label), sels[i]));
+      box.append(...rows);
+      box.append(h('button', {
+        class: 'btn', onclick: () => {
+          let ok = 0;
+          p.items.forEach((it, i) => {
+            const good = sels[i].value === it.answer;
+            if (good) ok++;
+            rows[i].classList.toggle('good', good);
+            rows[i].classList.toggle('bad', !good);
+          });
+          if (ok === p.items.length) solve();
+          else fail(p.items.length + '개 중 ' + ok + '개가 맞았어요. 빨간 줄이 있는 항목을 다시 살펴보세요.');
+        }
+      }, '확인'));
+    }
+
+    if (p.type === 'order') {
+      let picked = [];
+      const grid = h('div', { class: 'cards' });
+      const paint = () => {
+        grid.innerHTML = '';
+        p.shuffled.forEach(i => {
+          const idx = picked.indexOf(i);
+          grid.append(h('button', { class: 'ocard' + (idx >= 0 ? ' on' : ''), onclick: () => { if (idx < 0) { picked.push(i); paint(); } } },
+            p.cards[i], idx >= 0 ? h('span', { class: 'badge' }, String(idx + 1)) : null));
+        });
+      };
+      paint();
+      box.append(grid, h('div', { class: 'actions', style: 'margin-top:4px' },
+        h('button', { class: 'btn', onclick: () => {
+          const right = picked.length === p.cards.length && picked.every((v, k) => v === k);
+          if (right) solve(); else fail(picked.length < p.cards.length ? '카드를 모두 눌러 순서를 정해 주세요.' : '순서가 달라요. 초기화하고 다시 눌러 보세요.');
+        } }, '확인'),
+        h('button', { class: 'btn ghost', onclick: () => { picked = []; msg.textContent = ''; paint(); } }, '초기화')));
+    }
+
+    if (p.type === 'choice') {
+      box.append(h('div', { class: 'opts' }, shuffle(p.options).map(o => h('button', {
+        class: 'opt', onclick: () => { if (o === p.answer) solve(); else fail('“' + o + '”은(는) 아니에요. 다른 보기를 골라 보세요.'); }
+      }, o))));
+    }
+
+    msg = h('p', { class: 'msg', 'aria-live': 'polite' });
+    hintArea = h('div', {});
+    box.append(msg, h('button', { class: 'hintbtn', onclick: () => {
+      if (!S.hinted[key]) { S.hinted[key] = true; S.hints++; }
+      showHint();
+    } }, S.hinted[key] ? '힌트 다시 보기' : '힌트 보기 (사용 횟수에 포함돼요)'), hintArea);
+    showHint();
+  }
+  draw();
+  return box;
+}
+
+function checkClear(ri, clearBox) {
+  if (!S.solved[ri].every(Boolean)) return;
+  const r = ROOMS[ri];
+  clearBox.innerHTML = '';
+  const isLast = ri === ROOMS.length - 1;
+  if (!isLast && r.piece && !S.pieces.includes(r.piece)) S.pieces.push(r.piece);
+  const panel = h('div', { class: 'clear' },
+    h('h3', {}, isLast ? '자물쇠가 열렸어요!' : '「' + r.piece + '」 조각을 찾았어요!'),
+    r.fact ? h('p', { class: 'fact' }, r.fact) : null,
+    h('div', { class: 'actions' }, h('button', { class: 'btn red', onclick: () => {
+      if (isLast) showEnd(); else { S.room++; showRoom(); }
+    } }, isLast ? '해례본 되찾기' : '다음 방으로 가기')));
+  clearBox.append(panel);
+  // 상단 조각 칸 갱신
+  const slots = app.querySelector('.slots');
+  if (slots) slots.replaceWith(renderTop()[2]);
+  panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function showEnd() {
+  S.screen = 'end';
+  clearInterval(S.tick);
+  S.elapsed = Math.floor((Date.now() - S.start) / 1000);
+  const rank = S.hints === 0 ? '집현전 대제학' : (S.hints <= 3 ? '집현전 학사' : '집현전 수습 학자');
+  app.innerHTML = '';
+  app.append(h('div', { class: 'paper story' },
+    h('p', { class: 'date' }, '동이 트기 직전, 집현전'),
+    h('h1', {}, '탈출 성공!'),
+    h('div', { class: 'rank' }, rank),
+    h('p', {}, '여러분이 되찾은 「훈민정음 해례본」 덕분에 새 글자는 예정대로 백성에게 알려질 수 있었어요. 세종대왕이 만든 한글은 지금 우리가 매일 쓰는 글자가 되었답니다.'),
+    h('div', { class: 'stats' },
+      h('div', {}, h('span', {}, '걸린 시간'), h('strong', {}, fmt(S.elapsed))),
+      h('div', {}, h('span', {}, '힌트 사용'), h('strong', {}, S.hints + '번')),
+      h('div', {}, h('span', {}, '찾은 조각'), h('strong', {}, '훈민정음'))),
+    h('p', { class: 'em' }, '10월 9일 한글날, 우리 글자 한글을 한 번 더 바르게 써 보아요.'),
+    h('div', { class: 'actions' }, h('button', { class: 'btn red', onclick: startGame }, '다시 도전하기'), h('button', { class: 'btn ghost', onclick: showIntro }, '처음 화면으로'))));
+  window.scrollTo(0, 0);
+}
+
+resetGame();
+showIntro();
+</script>
+</body>
+</html>
